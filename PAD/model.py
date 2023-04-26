@@ -50,7 +50,7 @@ class PADModel(nn.Module):
             self.mapper = PADMapperModel.from_pretrained(mapper_ckpt)
 
         self.generator = MBartForConditionalGeneration.from_pretrained(ckpt)
-        self.generator.resize_token_embeddings(250054+3)
+        self.generator.resize_token_embeddings(self.mapper.config.mlm_vocab_size)
 
     def save_pretrained(self, path):
         self.mapper.save_pretrained(path + "/mapper")

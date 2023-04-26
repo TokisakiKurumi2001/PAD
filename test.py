@@ -1,35 +1,31 @@
-from PAD import PADDataLoader
+from PAD import PADDataLoader, PADModel
 dataloader = PADDataLoader('facebook/mbart-large-50', 128)
-[train_dataloader] = dataloader.get_dataloader(batch_size=5, types=['train'])
-limit = 3
+[train_dataloader] = dataloader.get_dataloader(batch_size=2, types=['train'])
+limit = 0
 cnt = 0
 for batch in train_dataloader:
-    print(batch)
+    # print(batch)
     cnt += 1
     if cnt > limit:
         break
 
-# model = ParaBLEUPretrainedModel('xlm-roberta-base', 'facebook/m2m100_418M')
-# gen_vocab_size = 128112
-# mlm_vocab_size = 250002
-# cls_class_num = 2
-# import torch.nn as nn
-# mlm_loss = nn.CrossEntropyLoss()
-# cls_loss = nn.CrossEntropyLoss()
-# gen_loss = nn.CrossEntropyLoss()
+model = PADModel('facebook/mbart-large-50')
+mlm_vocab_size = 250054+3
+cls_class_num = 2
+import torch.nn as nn
+mlm_loss = nn.CrossEntropyLoss()
+cls_loss = nn.CrossEntropyLoss()
 
-# mlm_labels = batch.pop('mask_labels')
-# cls_labels = batch.pop('ent_labels')
-# gen_labels = batch.pop('gen_labels')
-# m, c, g = model(batch)
+mlm_labels = batch.pop('decoder_labels')
+cls_labels = batch.pop('cls_label')
+m, c = model(batch)
 
 # # breakpoint()
-# gen_loss = gen_loss(g.view(-1, gen_vocab_size), gen_labels.view(-1).long())
-# mlm_loss = mlm_loss(m.view(-1, mlm_vocab_size), mlm_labels.view(-1).long())
-# cls_loss = cls_loss(c.view(-1, cls_class_num), cls_labels.view(-1).long())
+mlm_loss = mlm_loss(m.view(-1, mlm_vocab_size), mlm_labels.view(-1).long())
+cls_loss = cls_loss(c.view(-1, cls_class_num), cls_labels.view(-1).long())
 
-# loss = gen_loss + 4.0 * mlm_loss + 10.0 * cls_loss
-# print(loss)
+loss = mlm_loss + cls_loss
+print(loss)
 
 # from transformers import M2M100Tokenizer
 # tokenizer = M2M100Tokenizer.from_pretrained('facebook/m2m100_418M')

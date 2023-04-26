@@ -5,7 +5,7 @@ class PADConfig(PretrainedConfig):
 
     def __init__(
         self,
-        mlm_vocab_size=250054,
+        mlm_vocab_size=250057,
         hidden_size=1024,
         cls_out=2,
         initializer_range=0.02,
