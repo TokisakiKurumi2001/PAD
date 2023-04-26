@@ -10,8 +10,8 @@ from copy import deepcopy
 
 class PADDataLoader:
     def __init__(self, ckpt: str, max_length: int):
-        # data_dict = {'train': 'data/pawsx-extend.train.csv', 'test': 'data/pawsx-extend.test.csv', 'validation': 'data/pawsx-extend.validation.csv'}
-        data_dict = {'train': 'data/pawsx-extend.validation.csv'}
+        data_dict = {'train': 'data/pawsx-extend.train.csv', 'test': 'data/pawsx-extend.test.csv', 'validation': 'data/pawsx-extend.validation.csv'}
+        # data_dict = {'train': 'data/pawsx-extend.validation.csv'}
         dataset = load_dataset('csv', data_files=data_dict)
         self.tokenizer = MBart50TokenizerFast.from_pretrained(ckpt)
         self.tokenizer.add_tokens(['<LABEL_MASK>', '<LABEL_0>', '<LABEL_1>'])
@@ -27,19 +27,19 @@ class PADDataLoader:
             "zh": "zh_CN",
         }
 
-        self.dataset = dataset
+        # self.dataset = dataset
 
-        # self.dataset = dataset.map(
-        #     self.__tokenize,
-        #     remove_columns=dataset["train"].column_names
-        # )
+        self.dataset = dataset.map(
+            self.__tokenize,
+            remove_columns=dataset["train"].column_names
+        )
 
     def __tokenize_mlm(self, words: List[str], blk_words: List[str], mask_token_id: int) -> Dict[str, List[int]]:
         # mask whole word in block keywords
         masks = []
         if len(blk_words) > 0:
             for word in words:
-                if word in blk_kws or word.lower() in blk_words:
+                if word in blk_words or word.lower() in blk_words:
                     masks.append(1)
                 else:
                     masks.append(0)
@@ -69,7 +69,7 @@ class PADDataLoader:
 
         if examples['task'] == "MASK":
             label_hint = f"<LABEL_{examples['label']}>"
-            blk_words = examples['blk_kws'].split(",")
+            blk_words = examples['blk_kws'].split("|")
         else:
             label_hint = "<LABEL_MASK>"
             blk_words = []
@@ -90,10 +90,10 @@ class PADDataLoader:
             encoded_inputs = examples
         
         # print(examples)
-        batch = self.__tokenize(examples[0])
-        batch = {k: torch.tensor(v, dtype=torch.int32) for k, v in batch.items()}
+        # batch = self.__tokenize(examples[0])
+        # batch = {k: torch.tensor(v, dtype=torch.int32) for k, v in batch.items()}
         # convert list to tensor
-        # batch = {k: torch.tensor(v, dtype=torch.int32) for k, v in encoded_inputs.items()}
+        batch = {k: torch.tensor(v, dtype=torch.int32) for k, v in encoded_inputs.items()}
 
         return batch
 

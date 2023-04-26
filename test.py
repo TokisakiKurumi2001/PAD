@@ -1,9 +1,13 @@
 from PAD import PADDataLoader
 dataloader = PADDataLoader('facebook/mbart-large-50', 128)
-[test_dataloader] = dataloader.get_dataloader(batch_size=1, types=['train'])
-for batch in test_dataloader:
+[train_dataloader] = dataloader.get_dataloader(batch_size=5, types=['train'])
+limit = 3
+cnt = 0
+for batch in train_dataloader:
     print(batch)
-    break
+    cnt += 1
+    if cnt > limit:
+        break
 
 # model = ParaBLEUPretrainedModel('xlm-roberta-base', 'facebook/m2m100_418M')
 # gen_vocab_size = 128112
