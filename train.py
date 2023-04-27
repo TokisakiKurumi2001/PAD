@@ -1,6 +1,6 @@
 from pytorch_lightning.loggers import WandbLogger
 import pytorch_lightning as pl
-from PAD import PADPDataLoader, LitPAD
+from PAD import PADDataLoader, LitPAD
 
 if __name__ == "__main__":
     wandb_logger = WandbLogger(project="proj_new_dummy")
@@ -12,7 +12,7 @@ if __name__ == "__main__":
     lit_pad = LitPAD(**hyperparameter)
 
     # dataloader
-    parableu_pretrained_dataloader = PADPDataLoader(ckpt=hyperparameter['ckpt'], max_length=128)
+    parableu_pretrained_dataloader = PADDataLoader(ckpt=hyperparameter['ckpt'], max_length=128)
     [train_dataloader, test_dataloader, valid_dataloader] = parableu_pretrained_dataloader.get_dataloader(batch_size=64, types=["train", "test", "validation"])
 
     # train model
