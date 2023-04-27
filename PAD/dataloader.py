@@ -29,7 +29,7 @@ class PADDataLoader:
 
         # self.dataset = dataset
 
-        self.dataset = dataset.map(
+        self.dataset = dataset.shuffle(seed=42).map(
             self.__tokenize,
             remove_columns=dataset["train"].column_names
         )

@@ -32,7 +32,7 @@ class LitPAD(pl.LightningModule):
         mlm_loss = self.mlm_loss(m.view(-1, self.mlm_vocab_size), mlm_labels.view(-1).long())
         cls_loss = self.cls_loss(c.view(-1, self.cls_class_num), cls_labels.view(-1).long())
 
-        loss = mlm_loss + cls_loss
+        loss = torch.nan_to_num(mlm_loss) + cls_loss
         self.log("train/mlm_loss", mlm_loss, sync_dist=True)
         self.log("train/cls_loss", cls_loss, sync_dist=True)
         self.log("train/loss", loss, sync_dist=True)
@@ -46,7 +46,7 @@ class LitPAD(pl.LightningModule):
         mlm_loss = self.mlm_loss(m.view(-1, self.mlm_vocab_size), mlm_labels.view(-1).long())
         cls_loss = self.cls_loss(c.view(-1, self.cls_class_num), cls_labels.view(-1).long())
 
-        loss = mlm_loss + cls_loss
+        loss = torch.nan_to_num(mlm_loss) + cls_loss
         self.log("valid/mlm_loss", mlm_loss, sync_dist=True)
         self.log("valid/cls_loss", cls_loss, sync_dist=True)
         self.log("valid/loss", loss, sync_dist=True)
@@ -66,7 +66,7 @@ class LitPAD(pl.LightningModule):
         mlm_loss = self.mlm_loss(m.view(-1, self.mlm_vocab_size), mlm_labels.view(-1).long())
         cls_loss = self.cls_loss(c.view(-1, self.cls_class_num), cls_labels.view(-1).long())
 
-        loss = mlm_loss + cls_loss
+        loss = torch.nan_to_num(mlm_loss) + cls_loss
         self.log("test/mlm_loss", mlm_loss, sync_dist=True)
         self.log("test/cls_loss", cls_loss, sync_dist=True)
         self.log("test/loss", loss, sync_dist=True)

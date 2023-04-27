@@ -1,7 +1,7 @@
 from PAD import PADDataLoader, PADModel
 dataloader = PADDataLoader('facebook/mbart-large-50', 128)
 [train_dataloader] = dataloader.get_dataloader(batch_size=2, types=['train'])
-limit = 0
+limit = 3
 cnt = 0
 for batch in train_dataloader:
     # print(batch)
@@ -12,6 +12,7 @@ for batch in train_dataloader:
 model = PADModel('facebook/mbart-large-50')
 mlm_vocab_size = 250054+3
 cls_class_num = 2
+import torch
 import torch.nn as nn
 mlm_loss = nn.CrossEntropyLoss()
 cls_loss = nn.CrossEntropyLoss()
@@ -24,7 +25,7 @@ m, c = model(batch)
 mlm_loss = mlm_loss(m.view(-1, mlm_vocab_size), mlm_labels.view(-1).long())
 cls_loss = cls_loss(c.view(-1, cls_class_num), cls_labels.view(-1).long())
 
-loss = mlm_loss + cls_loss
+loss = torch.nan_to_num(mlm_loss) + cls_loss
 print(loss)
 
 # from transformers import M2M100Tokenizer
